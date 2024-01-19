@@ -17,7 +17,7 @@ export const updateFlight = async (flight: UpdateFlight) => {
     where: { id: flight.id },
     data: flight,
   })
-  revalidatePath(`/flights/[id]/edit`)
+  revalidatePath(`/flights/${flight.id}/edit`)
   revalidatePath('/')
   redirect('/')
 }
