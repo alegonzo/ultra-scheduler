@@ -1,105 +1,97 @@
 'use client'
-import { format, getHours, setHours, setMinutes } from 'date-fns'
-import { Box, Stack, Table, Tooltip } from '@mantine/core'
-import { useMemo } from 'react'
-import { IconPlaneArrival, IconPlaneDeparture } from '@tabler/icons-react'
+import { format, getHours, setHours } from 'date-fns'
+import {
+  ActionIcon,
+  Box,
+  Group,
+  Menu,
+  rem,
+  Stack,
+  Table,
+  Tooltip,
+} from '@mantine/core'
+import { useMemo, useTransition } from 'react'
+import {
+  IconDots,
+  IconEdit,
+  IconPlaneArrival,
+  IconPlaneDeparture,
+  IconTrash,
+} from '@tabler/icons-react'
+import { Flight } from '@prisma/client'
+import Link from 'next/link'
+import { deleteFlight } from '@/app/_actions'
 
-type Flight = {
-  name: string
-  arrival: Date
-  departure: Date
-}
-
-const flights: Flight[] = [
-  {
-    name: 'Vuelo 1',
-    arrival: setMinutes(setHours(new Date(), 0), 30),
-    departure: setHours(new Date(), 4),
-  },
-  {
-    name: 'Vuelo 2',
-    arrival: setHours(new Date(), 1),
-    departure: setMinutes(setHours(new Date(), 5), 40),
-  },
-  {
-    name: 'Vuelo 3',
-    arrival: setHours(new Date(), 5),
-    departure: setHours(new Date(), 9),
-  },
-  {
-    name: 'Vuelo 5',
-    arrival: setHours(new Date(), 1),
-    departure: setHours(new Date(), 3),
-  },
-  {
-    name: 'Vuelo 6',
-    arrival: setHours(new Date(), 12),
-    departure: setHours(new Date(), 15),
-  },
-  {
-    name: 'Vuelo 7',
-    arrival: setHours(new Date(), 16),
-    departure: setHours(new Date(), 19),
-  },
-  {
-    name: 'Vuelo 8',
-    arrival: setHours(new Date(), 20),
-    departure: setHours(new Date(), 21),
-  },
-  {
-    name: 'Vuelo 9',
-    arrival: setHours(new Date(), 7),
-    departure: setHours(new Date(), 10),
-  },
-  {
-    name: 'Vuelo 10',
-    arrival: setHours(new Date(), 0),
-    departure: setHours(new Date(), 4),
-  },
-]
-
-const colors = [
-  '#F76D6D',
-  '#64C1FF',
-  '#A2E67E',
-  '#E7E17C',
-  '#FFCA64',
-  '#AC7CE8',
-]
-const randomColor = () => colors[Math.floor(Math.random() * colors.length)]
 const hours = Array.from({ length: 24 }, (_, i) => i)
 
-export default function DaySchedule() {
+type ScheduleFlight = Flight & { color: string }
+type Props = {
+  flights: ScheduleFlight[]
+}
+
+export default function DaySchedule({ flights }: Props) {
+  const [isPending, startTransition] = useTransition()
+
   const renderRows = () => {
-    let lastColor = ''
     return flights.map((f) => {
-      let _color = randomColor()
-      while (_color === lastColor) {
-        _color = randomColor()
-        lastColor = _color
-      }
-      const arrivalHour = getHours(f.arrival)
-      const departureHour = getHours(f.departure)
+      const _color = f.color
+      const arrivalHour = f.arrival ? getHours(f?.arrival) : 0
+      const departureHour = f.departure ? getHours(f?.departure) : 23
 
       return (
-        <Table.Tr key={f.name}>
+        <Table.Tr key={f.id}>
           <Table.Td style={{ position: 'sticky' }}>
-            <Box style={{ width: 100 }} fw={'bold'}>
+            <Group style={{ width: 100 }} fw={'bold'}>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon size={'sm'} variant={'outline'} color={'default'}>
+                    <IconDots />
+                  </ActionIcon>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Item
+                    leftSection={
+                      <IconEdit style={{ width: rem(14), height: rem(14) }} />
+                    }
+                    component={Link}
+                    variant="light"
+                    href={`/flights/${f.id}/edit`}
+                  >
+                    Update
+                  </Menu.Item>
+                  <Menu.Item
+                    color="red"
+                    onClick={() => {
+                      startTransition(async () => {
+                        await deleteFlight(f.id)
+                      })
+                    }}
+                    disabled={isPending}
+                    leftSection={
+                      <IconTrash style={{ width: rem(14), height: rem(14) }} />
+                    }
+                  >
+                    Delete
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+
               {f.name}
-            </Box>
+            </Group>
           </Table.Td>
           {hours.map((hour) => {
             if (hour >= arrivalHour && hour <= departureHour)
               return (
-                <Tooltip label={f.name}>
-                  <Table.Td key={hour} bg={_color}>
-                    {hour === arrivalHour && (
+                <Tooltip label={f.name} key={hour}>
+                  <Table.Td bg={_color}>
+                    {f.arrival && hour === arrivalHour && (
                       <Stack align={'center'} gap={'xs'} fw={'bold'}>
                         <IconPlaneArrival />
                         {format(f.arrival, 'h:mm')}
                       </Stack>
                     )}
-                    {hour === departureHour && (
+                    {f.departure && hour === departureHour && (
                       <Stack align={'center'} gap={'xs'} fw={'bold'}>
                         <IconPlaneDeparture />
                         {format(f.departure, 'h:mm')}
@@ -108,7 +100,13 @@ export default function DaySchedule() {
                   </Table.Td>
                 </Tooltip>
               )
-            return <Table.Td key={hour}> </Table.Td>
+            return (
+              <Tooltip label={f.name} key={hour}>
+                <Table.Td>
+                  <Box></Box>
+                </Table.Td>
+              </Tooltip>
+            )
           })}
         </Table.Tr>
       )
