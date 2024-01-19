@@ -1,6 +1,14 @@
+import '@mantine/core/styles.css'
+import '@mantine/notifications/styles.css'
+import '@mantine/dates/styles.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
+import Providers from '@/components/providers'
+import { Notifications } from '@mantine/notifications'
+import { ColorSchemeScript } from '@mantine/core'
+import MainLayout from '@/components/main-layout'
+import { ClerkProvider } from '@clerk/nextjs'
+import { ReactNode } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -11,12 +19,33 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  flights,
 }: {
-  children: React.ReactNode
+  children: ReactNode
+  flights: ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+          <ColorSchemeScript />
+          <link rel="shortcut icon" href="/favicon.svg" />
+          <meta
+            name="viewport"
+            content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
+          />
+          <title></title>
+        </head>
+        <body>
+          <Providers>
+            <Notifications />
+            <MainLayout>
+              {children}
+              {flights}
+            </MainLayout>
+          </Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
