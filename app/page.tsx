@@ -8,15 +8,15 @@ import { endOfDay, format, startOfDay } from 'date-fns'
 const colors = [
   '#F76D6D',
   '#64C1FF',
-  /*'#A2E67E',
+  '#A2E67E',
   '#E7E17C',
   '#FFCA64',
-  '#AC7CE8',*/
+  '#AC7CE8',
 ]
 const randomColor = () => colors[Math.floor(Math.random() * colors.length)]
 const setFlightsColor = (flights: Flight[]) => {
   let lastColor = ''
-  console.log(lastColor)
+  //console.log(lastColor)
   return flights.map((f) => {
     let _color = randomColor()
     while (_color === lastColor) {
