@@ -6,6 +6,7 @@ import { Flight } from '@prisma/client'
 import { endOfDay, format, startOfDay } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import dayjs from 'dayjs'
+import { UTCDate } from '@date-fns/utc'
 
 const colors = [
   '#F76D6D',
@@ -30,7 +31,7 @@ const setFlightsColor = (flights: Flight[]) => {
 }
 
 export default async function Home() {
-  const today = new Date()
+  const today = new UTCDate()
   const _sod = startOfDay(today)
   const _eod = endOfDay(today)
   console.log({

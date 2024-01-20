@@ -25,7 +25,7 @@ export default function MainLayout({ children }: Props) {
   return (
     <AppShell header={{ height: 60 }} padding="lg">
       <AppShell.Header>
-        <Container size="md" mt={'sm'}>
+        <Container size="lg" mt={'sm'}>
           <Flex justify={'space-between'}>
             <Title order={3}>Ultra Scheduler</Title>
             <UserButton />
@@ -34,7 +34,7 @@ export default function MainLayout({ children }: Props) {
       </AppShell.Header>
 
       <AppShell.Main>
-        <Container size={'xl'}>{children}</Container>
+        <Container size={'lg'}>{children}</Container>
       </AppShell.Main>
       <AppShell.Footer></AppShell.Footer>
     </AppShell>
