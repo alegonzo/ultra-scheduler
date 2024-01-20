@@ -23,15 +23,7 @@ export default function MainLayout({ children }: Props) {
   ]
 
   return (
-    <AppShell
-      header={{ height: 60 }}
-      navbar={{
-        width: 300,
-        breakpoint: 'sm',
-        collapsed: { mobile: !opened, desktop: true },
-      }}
-      padding="lg"
-    >
+    <AppShell header={{ height: 60 }} padding="lg">
       <AppShell.Header>
         <Container size="md" mt={'sm'}>
           <Flex justify={'space-between'}>
@@ -41,11 +33,8 @@ export default function MainLayout({ children }: Props) {
         </Container>
       </AppShell.Header>
 
-      <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
-
-      <AppShell.Navbar p="md" withBorder={false}></AppShell.Navbar>
       <AppShell.Main>
-        <Container>{children}</Container>
+        <Container size={'xl'}>{children}</Container>
       </AppShell.Main>
       <AppShell.Footer></AppShell.Footer>
     </AppShell>

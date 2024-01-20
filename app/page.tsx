@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma'
 import Link from 'next/link'
 import { Flight } from '@prisma/client'
 import { endOfDay, format, startOfDay } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
+import dayjs from 'dayjs'
 
 const colors = [
   '#F76D6D',
@@ -28,8 +30,14 @@ const setFlightsColor = (flights: Flight[]) => {
 }
 
 export default async function Home() {
-  const _sod = startOfDay(new Date())
-  const _eod = endOfDay(new Date())
+  const today = new Date()
+  const _sod = startOfDay(today)
+  const _eod = endOfDay(today)
+  console.log({
+    today,
+    _sod,
+    _eod,
+  })
 
   const flights = await prisma.flight.findMany({
     orderBy: {

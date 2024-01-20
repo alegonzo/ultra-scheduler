@@ -40,8 +40,8 @@ export default function DaySchedule({ flights }: Props) {
 
       return (
         <Table.Tr key={f.id}>
-          <Table.Td style={{ position: 'sticky' }}>
-            <Group style={{ width: 100 }} fw={'bold'}>
+          <Table.Td>
+            <Group fw={'bold'}>
               <Menu shadow="md" width={200}>
                 <Menu.Target>
                   <ActionIcon size={'sm'} variant={'outline'} color={'default'}>
@@ -116,32 +116,27 @@ export default function DaySchedule({ flights }: Props) {
   const header = useMemo(() => {
     return hours.map((hour) => (
       <Table.Th key={hour}>
-        <Box style={{ width: 45 }}>
-          {format(setHours(new Date(), hour), 'h a')}
-        </Box>
+        <Box>{format(setHours(new Date(), hour), 'h a')}</Box>
       </Table.Th>
     ))
   }, [])
 
   return (
-    <Table.ScrollContainer minWidth={500}>
-      <Table
-        stickyHeader
-        striped
-        highlightOnHover
-        withTableBorder
-        withColumnBorders
-      >
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th style={{ width: 150, position: 'sticky' }}>
-              Flight
-            </Table.Th>
-            {header}
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{renderRows()}</Table.Tbody>
-      </Table>
-    </Table.ScrollContainer>
+    <Table
+      stickyHeader
+      striped
+      highlightOnHover
+      withTableBorder
+      withColumnBorders
+      w={'100%'}
+    >
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th style={{ width: 150, position: 'sticky' }}>Flight</Table.Th>
+          {header}
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>{renderRows()}</Table.Tbody>
+    </Table>
   )
 }
