@@ -4,7 +4,7 @@ import { zodResolver } from 'mantine-form-zod-resolver'
 import { useRouter } from 'next/navigation'
 import { createFlight, updateFlight } from '@/app/_actions'
 import { notifications } from '@mantine/notifications'
-import { Button, Flex, Modal, Stack, TextInput } from '@mantine/core'
+import { Alert, Button, Flex, Modal, Stack, TextInput } from '@mantine/core'
 import { DateTimePicker } from '@mantine/dates'
 import {
   CreateFlight,
@@ -13,6 +13,7 @@ import {
   updateFlightSchema,
 } from '@/lib/types'
 import { Flight } from '@prisma/client'
+import { IconInfoCircle } from '@tabler/icons-react'
 
 type FormValues = CreateFlight | UpdateFlight
 type Props = {
@@ -30,7 +31,6 @@ export default function FlightForm({ flight }: Props) {
     },
     validate: zodResolver(flight ? updateFlightSchema : createFlightSchema),
   })
-  console.log(form.errors)
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -75,9 +75,22 @@ export default function FlightForm({ flight }: Props) {
             {...form.getInputProps('departure')}
           />
 
+          {form.errors['arrival-departure'] && (
+            <Alert
+              variant="light"
+              color="red"
+              title="Alert title"
+              icon={<IconInfoCircle />}
+            >
+              {form.errors['arrival-departure']}
+            </Alert>
+          )}
+
           <Flex gap={'sm'} mt={'lg'}>
             <Button type="submit">Accept</Button>
-            <Button onClick={() => router.back()}>Cancel</Button>
+            <Button onClick={() => router.back()} variant={'default'}>
+              Cancel
+            </Button>
           </Flex>
         </Stack>
       </form>

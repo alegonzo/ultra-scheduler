@@ -1,18 +1,8 @@
 'use client'
 import { format, getHours, setHours } from 'date-fns'
-import {
-  ActionIcon,
-  Box,
-  Group,
-  Menu,
-  rem,
-  Stack,
-  Table,
-  Tooltip,
-} from '@mantine/core'
+import { Box, Group, Menu, rem, Stack, Table, Tooltip } from '@mantine/core'
 import { useMemo, useTransition } from 'react'
 import {
-  IconDots,
   IconEdit,
   IconPlaneArrival,
   IconPlaneDeparture,
@@ -42,11 +32,9 @@ export default function DaySchedule({ flights }: Props) {
         <Table.Tr key={f.id}>
           <Table.Td>
             <Group fw={'bold'}>
-              <Menu shadow="md" width={200}>
+              <Menu shadow="md">
                 <Menu.Target>
-                  <ActionIcon size={'sm'} variant={'outline'} color={'default'}>
-                    <IconDots />
-                  </ActionIcon>
+                  <Box style={{ cursor: 'pointer' }}> {f.name}</Box>
                 </Menu.Target>
 
                 <Menu.Dropdown>
@@ -76,24 +64,22 @@ export default function DaySchedule({ flights }: Props) {
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>
-
-              {f.name}
             </Group>
           </Table.Td>
           {hours.map((hour) => {
             if (hour >= arrivalHour && hour <= departureHour)
               return (
                 <Tooltip label={f.name} key={hour}>
-                  <Table.Td bg={_color}>
+                  <Table.Td bg={_color} p={4}>
                     {f.arrival && hour === arrivalHour && (
-                      <Stack align={'center'} gap={'xs'} fw={'bold'}>
-                        <IconPlaneArrival />
-                        {format(f.arrival, 'h:mm')}
+                      <Stack align={'center'} gap={0}>
+                        <IconPlaneArrival size={18} />
+                        {format(f.arrival, 'H:mm')}
                       </Stack>
                     )}
                     {f.departure && hour === departureHour && (
-                      <Stack align={'center'} gap={'xs'} fw={'bold'}>
-                        <IconPlaneDeparture />
+                      <Stack align={'center'} gap={0}>
+                        <IconPlaneDeparture size={18} />
                         {format(f.departure, 'h:mm')}
                       </Stack>
                     )}
@@ -115,8 +101,8 @@ export default function DaySchedule({ flights }: Props) {
 
   const header = useMemo(() => {
     return hours.map((hour) => (
-      <Table.Th key={hour}>
-        <Box>{format(setHours(new Date(), hour), 'h a')}</Box>
+      <Table.Th key={hour} fz={'xs'} fw={'light'} style={{ padding: 4 }}>
+        <Box>{format(setHours(new Date(), hour), 'H ')}</Box>
       </Table.Th>
     ))
   }, [])
@@ -128,11 +114,10 @@ export default function DaySchedule({ flights }: Props) {
       highlightOnHover
       withTableBorder
       withColumnBorders
-      w={'100%'}
     >
       <Table.Thead>
         <Table.Tr>
-          <Table.Th style={{ width: 150, position: 'sticky' }}>Flight</Table.Th>
+          <Table.Th>Flight</Table.Th>
           {header}
         </Table.Tr>
       </Table.Thead>
